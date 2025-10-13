@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { useQuests } from '../../hooks/useQuests'
 import QuestFilters from './QuestFilters'
 import QuestCard from './QuestCard'
 import QuestDetails from './QuestDetails'
+import QuestStats from './QuestStats'
+import QuestSort from './QuestSort'
 
 const QuestList = () => {
   const { quests, setQuests, loading, error } = useQuests()
@@ -10,21 +12,63 @@ const QuestList = () => {
   const [selectedTrader, setSelectedTrader] = useState('All Traders')
   const [selectedStatus, setSelectedStatus] = useState('All Status')
   const [selectedQuest, setSelectedQuest] = useState(null)
+  const [sortBy, setSortBy] = useState('name')
+  const [sortOrder, setSortOrder] = useState('asc')
 
-  const filteredQuests = quests.filter((quest) => {
-    const matchesSearch = quest.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase())
-    const matchesTrader =
-      selectedTrader === 'All Traders' || quest.trader === selectedTrader
-    const matchesStatus =
-      selectedStatus === 'All Status' ||
-      (selectedStatus === 'In Progress' && quest.status === 'in-progress') ||
-      (selectedStatus === 'Available' && quest.status === 'available') ||
-      (selectedStatus === 'Completed' && quest.status === 'completed')
+  const filteredQuests = useMemo(() => {
+    // First, filter
+    let filtered = quests.filter((quest) => {
+      const matchesSearch = quest.name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+      const matchesTrader =
+        selectedTrader === 'All Traders' || quest.trader === selectedTrader
+      const matchesStatus =
+        selectedStatus === 'All Status' ||
+        (selectedStatus === 'In Progress' && quest.status === 'in-progress') ||
+        (selectedStatus === 'Available' && quest.status === 'available') ||
+        (selectedStatus === 'Completed' && quest.status === 'completed')
 
-    return matchesSearch && matchesTrader && matchesStatus
-  })
+      return matchesSearch && matchesTrader && matchesStatus
+    })
+
+    // Then, sort
+    filtered.sort((a, b) => {
+      let compareA, compareB
+
+      switch (sortBy) {
+        case 'name':
+          compareA = a.name.toLowerCase()
+          compareB = b.name.toLowerCase()
+          break
+        case 'level':
+          compareA = a.level
+          compareB = b.level
+          break
+        case 'trader':
+          compareA = a.trader.toLowerCase()
+          compareB = b.trader.toLowerCase()
+          break
+        case 'map':
+          compareA = a.map.toLowerCase()
+          compareB = b.map.toLowerCase()
+          break
+        case 'status':
+          const statusOrder = { 'in-progress': 0, available: 1, completed: 2 }
+          compareA = statusOrder[a.status]
+          compareB = statusOrder[b.status]
+          break
+        default:
+          return 0
+      }
+
+      if (compareA < compareB) return sortOrder === 'asc' ? -1 : 1
+      if (compareA > compareB) return sortOrder === 'asc' ? 1 : -1
+      return 0
+    })
+
+    return filtered
+  }, [quests, searchTerm, selectedTrader, selectedStatus, sortBy, sortOrder])
 
   const handleQuestClick = (quest) => {
     setSelectedQuest(quest)
@@ -40,6 +84,10 @@ const QuestList = () => {
 
   const handleCloseDetails = () => {
     setSelectedQuest(null)
+  }
+
+  const handleNavigateToQuest = (quest) => {
+    setSelectedQuest(quest)
   }
 
   if (loading) {
@@ -110,6 +158,8 @@ const QuestList = () => {
         </p>
       </div>
 
+      <QuestStats quests={quests} />
+
       <QuestFilters
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
@@ -130,6 +180,13 @@ const QuestList = () => {
         <p style={{ color: '#9ca3af', fontSize: '14px' }}>
           Showing {filteredQuests.length} of {quests.length} quests
         </p>
+
+        <QuestSort
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          sortOrder={sortOrder}
+          setSortOrder={setSortOrder}
+        />
       </div>
 
       <div
@@ -172,6 +229,8 @@ const QuestList = () => {
           quest={selectedQuest}
           onClose={handleCloseDetails}
           onUpdateQuest={handleUpdateQuest}
+          allQuests={quests}
+          onNavigateToQuest={handleNavigateToQuest}
         />
       )}
     </div>

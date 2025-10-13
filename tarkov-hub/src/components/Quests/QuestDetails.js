@@ -1,11 +1,22 @@
 import React from 'react'
-import { X, CheckCircle, Circle, Package } from 'lucide-react'
+import { X, CheckCircle, Circle, Package, StickyNote } from 'lucide-react'
+import QuestDependencies from './QuestDependencies'
 
-const QuestDetails = ({ quest, onClose, onUpdateQuest }) => {
+const QuestDetails = ({
+  quest,
+  onClose,
+  onUpdateQuest,
+  allQuests,
+  onNavigateToQuest,
+}) => {
   if (!quest) return null
 
   const handleStatusChange = (newStatus) => {
     onUpdateQuest({ ...quest, status: newStatus })
+  }
+
+  const handleNotesChange = (newNotes) => {
+    onUpdateQuest({ ...quest, notes: newNotes })
   }
 
   const handleItemFound = (itemIndex, increment) => {
@@ -13,14 +24,12 @@ const QuestDetails = ({ quest, onClose, onUpdateQuest }) => {
     const item = updatedQuest.requiredItems[itemIndex]
 
     if (item.count) {
-      // Item with count
       const newFound = Math.max(
         0,
         Math.min(item.count, (item.found || 0) + increment)
       )
       updatedQuest.requiredItems[itemIndex] = { ...item, found: newFound }
     } else {
-      // Simple boolean item
       updatedQuest.requiredItems[itemIndex] = { ...item, found: !item.found }
     }
 
@@ -40,7 +49,6 @@ const QuestDetails = ({ quest, onClose, onUpdateQuest }) => {
 
   return (
     <>
-      {/* Backdrop */}
       <div
         onClick={onClose}
         style={{
@@ -54,7 +62,6 @@ const QuestDetails = ({ quest, onClose, onUpdateQuest }) => {
           padding: '16px',
         }}
       >
-        {/* Modal */}
         <div
           onClick={(e) => e.stopPropagation()}
           style={{
@@ -68,7 +75,6 @@ const QuestDetails = ({ quest, onClose, onUpdateQuest }) => {
             boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)',
           }}
         >
-          {/* Header */}
           <div
             style={{
               padding: '24px',
@@ -126,7 +132,6 @@ const QuestDetails = ({ quest, onClose, onUpdateQuest }) => {
             </button>
           </div>
 
-          {/* Content */}
           <div style={{ padding: '24px' }}>
             {/* Status */}
             <div style={{ marginBottom: '24px' }}>
@@ -214,6 +219,51 @@ const QuestDetails = ({ quest, onClose, onUpdateQuest }) => {
                   </div>
                 ))}
               </div>
+            </div>
+
+            {/* Quest Dependencies */}
+            <QuestDependencies
+              quest={quest}
+              allQuests={allQuests}
+              onQuestClick={onNavigateToQuest}
+            />
+
+            {/* Personal Notes */}
+            <div style={{ marginBottom: '24px' }}>
+              <h3
+                style={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  color: 'white',
+                  marginBottom: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                <StickyNote size={18} />
+                Personal Notes
+              </h3>
+              <textarea
+                value={quest.notes || ''}
+                onChange={(e) => handleNotesChange(e.target.value)}
+                placeholder="Add your notes here... (strategies, item locations, tips, etc.)"
+                style={{
+                  width: '100%',
+                  minHeight: '100px',
+                  padding: '12px',
+                  backgroundColor: '#374151',
+                  border: '1px solid #4b5563',
+                  borderRadius: '8px',
+                  color: '#f3f4f6',
+                  fontSize: '14px',
+                  fontFamily: 'inherit',
+                  resize: 'vertical',
+                  outline: 'none',
+                }}
+                onFocus={(e) => (e.target.style.borderColor = '#3b82f6')}
+                onBlur={(e) => (e.target.style.borderColor = '#4b5563')}
+              />
             </div>
 
             {/* Required Items */}

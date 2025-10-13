@@ -15,6 +15,7 @@ export const transformQuestData = (apiQuest) => {
     requiredItems: extractRequiredItems(apiQuest.objectives),
     status: 'available',
     dependencies: apiQuest.taskRequirements?.map((req) => req.task.id) || [],
+    notes: '',
   }
 }
 
