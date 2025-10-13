@@ -8,6 +8,7 @@ import Items from './components/Items/Items'
 import { useQuests } from './hooks/useQuests'
 import './App.css'
 import Hideout from './components/Hideout/Hideout'
+import WeaponBuilder from './components/Weapons/WeaponBuilder'
 
 function App() {
   const [activeSection, setActiveSection] = useState('dashboard')
@@ -54,6 +55,8 @@ function App() {
         return <Items />
       case 'hideout':
         return <Hideout />
+      case 'weapons':
+        return <WeaponBuilder />
       default:
         return (
           <Dashboard

@@ -6,6 +6,7 @@ import {
   Target,
   Package,
   Building2,
+  Crosshair, // ← Add this line
 } from 'lucide-react'
 
 const Sidebar = ({
@@ -20,11 +21,8 @@ const Sidebar = ({
     { id: 'quests', icon: CheckSquare, label: 'Quests' },
     { id: 'ballistics', icon: Target, label: 'Ballistics' },
     { id: 'items', icon: Package, label: 'Items' },
-    {
-      id: 'hideout',
-      label: 'Hideout',
-      icon: Building2, // or Home icon
-    },
+    { id: 'hideout', icon: Building2, label: 'Hideout' },
+    { id: 'weapons', icon: Crosshair, label: 'Weapons' }, // ✨ NEW
   ]
 
   return (
