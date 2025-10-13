@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { useQuests } from '../../hooks/useQuests'
 import QuestFilters from './QuestFilters'
 import QuestCard from './QuestCard'
@@ -6,7 +6,7 @@ import QuestDetails from './QuestDetails'
 import QuestStats from './QuestStats'
 import QuestSort from './QuestSort'
 
-const QuestList = () => {
+const QuestList = ({ initialSelectedQuest, onClearSelectedQuest }) => {
   const { quests, setQuests, loading, error } = useQuests()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedTrader, setSelectedTrader] = useState('All Traders')
@@ -14,6 +14,17 @@ const QuestList = () => {
   const [selectedQuest, setSelectedQuest] = useState(null)
   const [sortBy, setSortBy] = useState('name')
   const [sortOrder, setSortOrder] = useState('asc')
+
+  // Handle initial selected quest (only once when it's first provided)
+  useEffect(() => {
+    if (initialSelectedQuest && !selectedQuest) {
+      setSelectedQuest(initialSelectedQuest)
+      // Clear it after setting to prevent re-triggering
+      if (onClearSelectedQuest) {
+        onClearSelectedQuest()
+      }
+    }
+  }, [initialSelectedQuest?.id]) // Only depend on the quest ID, not the function
 
   const filteredQuests = useMemo(() => {
     // First, filter

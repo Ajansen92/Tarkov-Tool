@@ -1,52 +1,63 @@
 import React, { useState } from 'react'
 import Layout from './components/Layout/Layout'
 import QuestList from './components/Quests/QuestList'
+import Dashboard from './components/Dashboard/Dashboard'
+import Maps from './components/Maps/Maps'
+import Ballistics from './components/Ballistics/Ballistics'
+import Items from './components/Items/Items'
+import { useQuests } from './hooks/useQuests'
 import './App.css'
 
 function App() {
-  const [activeSection, setActiveSection] = useState('quests')
+  const [activeSection, setActiveSection] = useState('dashboard')
+  const [selectedQuestForList, setSelectedQuestForList] = useState(null)
+  const { quests } = useQuests()
+
+  const handleNavigateToSection = (section) => {
+    setActiveSection(section)
+  }
+
+  const handleNavigateToQuest = (quest) => {
+    setSelectedQuestForList(quest)
+    setActiveSection('quests')
+  }
+
+  const handleClearSelectedQuest = () => {
+    setSelectedQuestForList(null)
+  }
 
   const renderSection = () => {
     switch (activeSection) {
       case 'dashboard':
         return (
-          <div style={{ padding: '24px' }}>
-            <h2 style={{ fontSize: '24px', fontWeight: 'bold' }}>
-              Dashboard - Coming Soon
-            </h2>
-          </div>
+          <Dashboard
+            quests={quests}
+            onNavigateToSection={handleNavigateToSection}
+            onNavigateToQuest={handleNavigateToQuest}
+          />
         )
       case 'maps':
         return (
-          <div style={{ padding: '24px' }}>
-            <h2 style={{ fontSize: '24px', fontWeight: 'bold' }}>
-              Maps - Coming Soon
-            </h2>
-          </div>
+          <Maps quests={quests} onNavigateToQuest={handleNavigateToQuest} />
         )
       case 'quests':
-        return <QuestList />
+        return (
+          <QuestList
+            initialSelectedQuest={selectedQuestForList}
+            onClearSelectedQuest={handleClearSelectedQuest}
+          />
+        )
       case 'ballistics':
-        return (
-          <div style={{ padding: '24px' }}>
-            <h2 style={{ fontSize: '24px', fontWeight: 'bold' }}>
-              Ballistics - Coming Soon
-            </h2>
-          </div>
-        )
+        return <Ballistics />
       case 'items':
-        return (
-          <div style={{ padding: '24px' }}>
-            <h2 style={{ fontSize: '24px', fontWeight: 'bold' }}>
-              Items - Coming Soon
-            </h2>
-          </div>
-        )
+        return <Items />
       default:
         return (
-          <div style={{ padding: '24px' }}>
-            <h2 style={{ fontSize: '24px', fontWeight: 'bold' }}>Dashboard</h2>
-          </div>
+          <Dashboard
+            quests={quests}
+            onNavigateToSection={handleNavigateToSection}
+            onNavigateToQuest={handleNavigateToQuest}
+          />
         )
     }
   }
