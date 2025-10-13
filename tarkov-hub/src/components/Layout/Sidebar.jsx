@@ -1,5 +1,12 @@
 import React from 'react'
-import { Home, Map, CheckSquare, Target, Package } from 'lucide-react'
+import {
+  Home,
+  Map,
+  CheckSquare,
+  Target,
+  Package,
+  Building2,
+} from 'lucide-react'
 
 const Sidebar = ({
   activeSection,
@@ -13,6 +20,11 @@ const Sidebar = ({
     { id: 'quests', icon: CheckSquare, label: 'Quests' },
     { id: 'ballistics', icon: Target, label: 'Ballistics' },
     { id: 'items', icon: Package, label: 'Items' },
+    {
+      id: 'hideout',
+      label: 'Hideout',
+      icon: Building2, // or Home icon
+    },
   ]
 
   return (
