@@ -6,8 +6,9 @@ import {
   Target,
   Package,
   Building2,
-  Crosshair, // ← Add this line
+  Crosshair,
 } from 'lucide-react'
+import { Shield } from 'lucide-react'
 
 const Sidebar = ({
   activeSection,
@@ -22,7 +23,8 @@ const Sidebar = ({
     { id: 'ballistics', icon: Target, label: 'Ballistics' },
     { id: 'items', icon: Package, label: 'Items' },
     { id: 'hideout', icon: Building2, label: 'Hideout' },
-    { id: 'weapons', icon: Crosshair, label: 'Weapons' }, // ✨ NEW
+    { id: 'weapons', icon: Crosshair, label: 'Weapons' },
+    { id: 'ammo', icon: Shield, label: 'Ammo Calc' },
   ]
 
   return (
